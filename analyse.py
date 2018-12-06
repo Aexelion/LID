@@ -5,6 +5,8 @@ import csv
 import whois
 import socket
 import ipaddress
+import ssl
+import whois
 """
 Recherche de site de fishing parmis les sites '.org'
 """
@@ -17,20 +19,17 @@ def creationCSV(filename,type):
 				if type in ligne[1]:
 					writer.writerow(ligne)
 
-creationCSV("site-org",".org")
-creationCSV("site-gouvfr","gouv.fr")
 
-
-def geolocaliser(ipAddr):
-	ip = ipaddress.ip_address(ipAddr)
-	if ip.version == 4:
-		with open("BDD/GeoLite2-City-Blocks-IPv4.csv", newline='') as csvListIPv4:
-			reader = csv.DictReader(csvListIPv4, delimiter=',')
-			for ligne in reader :
-				reseau = ipaddress.IPv4Network(ligne['network'])
-				if ip in list(reseau.hosts()) :
-					print(ligne['network'])
-					return 0
+# def geolocaliser(ipAddr):
+# 	ip = ipaddress.ip_address(ipAddr)
+# 	if ip.version == 4:
+# 		with open("BDD/GeoLite2-City-Blocks-IPv4.csv", newline='') as csvListIPv4:
+# 			reader = csv.DictReader(csvListIPv4, delimiter=',')
+# 			for ligne in reader :
+# 				reseau = ipaddress.IPv4Network(ligne['network'])
+# 				if ip in list(reseau.hosts()) :
+# 					print(ligne['network'])
+# 					return 0
 
 
 def variationURL(url):
@@ -42,15 +41,16 @@ def httpOnly(url):
 
 
 def reservationDomaine(url):
-	"""Renvois la date"""
-	pass
+	whoisdom = whois.whois(url)
+    date_exp_domain = whoisdom.expiration_date
+    date_cre_domain = whoisdom.creation_date
+	hebergeur = whoisdom.registrar
 
 
 def reputation(url):
 	"""Verifie la CA, l'IP et l'AS"""
-	IPaddr = socket.gethostbyname(url)
-
-	pass
+	ipAddr = socket.gethostbyname(url)
+	
 
 
 def distance(url):
@@ -58,8 +58,28 @@ def distance(url):
 
 
 def verifCertif(url):
-	pass
+	hostname = url
+	context = ssl.create_default_context()
+	sock = context.wrap_socket(socket.socket(), server_hostname=hostname)
+	sock.connect((hostname, 443)) #try?
+	certificate = sock.getpeercert()
+	subject = dict(x[0] for x in certificate['subject'])
+	issued_to = subject['commonName']
+	issuer = dict(x[0] for x in certificate['issuer'])
+	issued_by = issuer['commonName']
+	validity_start = certificate['notBefore']
+	validity_end = certificate['notAfter']
+	version = certificate['version']
+	print(issued_to)
+	print(issued_by)
+	print(validity_start)
+	print(validity_end)
+
+
 
 
 if __name__ == '__main__':
-	geolocaliser('192.168.1.1')
+	#geolocaliser('192.168.1.1')
+	verifCertif('google.com')
+	verifCertif('wikipedia.org')
+	verifCertif('www.impots.gouv.fr')

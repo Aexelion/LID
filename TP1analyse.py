@@ -2,7 +2,9 @@ import logging
 import sys
 import datetime
 import certstream
+import queue
 
+#exQ = queue()
 
 def print_callback(message, context):
     logging.debug("Message -> {}".format(message))
@@ -18,10 +20,16 @@ def print_callback(message, context):
         else:
             domain = all_domains[0]
         if '.org' in domain or '.gouv.fr' in domain:
-            ##queue 
+            #exQ.put_nowait(domain)
+            #item = exQ.get()
+            #print(item)
+            #lescriptdetest(domain)
             sys.stdout.write(u"[{}] {} (SAN: {})\n".format(datetime.datetime.now().strftime('%m/%d/%y %H:%M:%S'), domain, ", ".join(message['data']['leaf_cert']['all_domains'][1:])))
         sys.stdout.flush()
 
 logging.basicConfig(format='[%(levelname)s:%(name)s] %(asctime)s - %(message)s', level=logging.INFO)
 
 certstream.listen_for_events(print_callback,"wss://certstream.calidog.io")
+
+def lescriptdetest(domain):
+    pass

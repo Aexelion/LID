@@ -1,4 +1,4 @@
-
+import whois
 
 def resdom(url):
     whoisurl = whois.whois(url)
@@ -9,13 +9,13 @@ def resdom(url):
 
     score = 0
     print(whoisurl)
-    print(texturl)
-    print(ca_exp) ##verifier la validite
-    print(ca_cre) ##verifie le mois? (moins d'un mois)
-    print(heb) ##verifie le nom de domaine
+    #print(texturl)
+    #print(ca_exp) ##verifier la validite
+    #print(ca_cre) ##verifie le mois? (moins d'un mois)
+    #print(heb) ##verifie le nom de domaine
 
 
-resdom("google.fr")
+#resdom("google.fr")
 resdom("aclearpath.net")
 
 ##feeds.INTHREAT.com/osint
