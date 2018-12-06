@@ -37,20 +37,26 @@ def variationURL(url):
 
 
 def httpOnly(url):
-	pass
+	#get url2 from database
+	url2 = 'something.com'
+	if(len(url)!=len(url2)):
+		pass #score + 0?
+	else:
+		count = sum(1 for a, b in zip(seq1, seq2) if a != b)
 
 
 def reservationDomaine(url):
 	whoisdom = whois.whois(url)
-    date_exp_domain = whoisdom.expiration_date
-    date_cre_domain = whoisdom.creation_date
+	date_exp_domain = whoisdom.expiration_date
+	date_cre_domain = whoisdom.creation_date
 	hebergeur = whoisdom.registrar
+	print(date_cre_domain,date_exp_domain)
 
 
 def reputation(url):
 	"""Verifie la CA, l'IP et l'AS"""
 	ipAddr = socket.gethostbyname(url)
-	
+
 
 
 def distance(url):
@@ -81,5 +87,8 @@ def verifCertif(url):
 if __name__ == '__main__':
 	#geolocaliser('192.168.1.1')
 	verifCertif('google.com')
+	reservationDomaine('google.com')
 	verifCertif('wikipedia.org')
+	reservationDomaine('wikipedia.org')
 	verifCertif('www.impots.gouv.fr')
+	reservationDomaine('www.impots.gouv.fr')
