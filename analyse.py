@@ -4,6 +4,7 @@ import csv
 # import geoip2.webservice
 import whois
 import socket
+import ipaddress
 """
 Recherche de site de fishing parmis les sites '.org'
 """
@@ -20,13 +21,16 @@ creationCSV("site-org",".org")
 creationCSV("site-gouvfr","gouv.fr")
 
 
-# def geolocaliser(ipAddr):
-# 	with open("BDD/GeoLite2-City-Blocks-IPv4.csv", csv='') as csvListIPv4:
-# 		reader = csv.reader(csvListIPv4, delimiter=',')
-# 		for ligne in reader :
-# 			if ipAddr = ligne['network'] :
-# 				pass
-# 	pass
+def geolocaliser(ipAddr):
+	ip = ipaddress.ip_address(ipAddr)
+	if ip.version == 4:
+		with open("BDD/GeoLite2-City-Blocks-IPv4.csv", newline='') as csvListIPv4:
+			reader = csv.DictReader(csvListIPv4, delimiter=',')
+			for ligne in reader :
+				reseau = ipaddress.IPv4Network(ligne['network'])
+				if ip in list(reseau.hosts()) :
+					print(ligne['network'])
+					return 0
 
 
 def variationURL(url):
@@ -54,9 +58,8 @@ def distance(url):
 
 
 def verifCertif(url):
-
 	pass
 
 
-#if __name__ == '__main__':
-#	geolocaliser('192.168.1.1')
+if __name__ == '__main__':
+	geolocaliser('192.168.1.1')
