@@ -12,15 +12,6 @@ import datetime
 Recherche de site de fishing parmis les sites '.org'
 """
 
-def scoreMaker(url):
-	scoreOfUrl = (url,0)
-	return scoreOfUrl
-
-def scoreModifier(scoreOfUrl, danger_p):
-	scoreOfUrl = (scoreOfUrl[0],scoreOfUrl[1]+danger_p)
-	return scoreOfUrl
-
-
 def creationCSV(filename,type):
 	with open('top-1m.csv', newline='') as csvIn:
 		with open(filename+'.csv', 'w', newline='') as csvOut:
@@ -68,21 +59,31 @@ def geoScore(url, wList=[], bList=[]):
 		return 50
 
 
-def variationURL(url):
-	#get url2 from database
-	url2 = 'something.com'
+def variationURL(url, url2):
 	if(len(url)!=len(url2)):
-		pass #score + 0?
+		return 0
 	else:
 		count = sum(1 for a, b in zip(seq1, seq2) if a != b)
+		return count
+
+
+def verifVariation(url):
+	with open("top-1m.csv", newline='') as siteRef:
+		read = csv.reader(siteRef, delimiter=',')
+		mini = 1000000
+		for ligne in read:
+			nbVar = variationURL(url, ligne[1])
+			if nbVar < mini :
+				mini = nbVar
+		return mini
 
 
 def virusTotalScan(url):
 	params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'url':url}
 	response = requests.post('https://www.virustotal.com/vtapi/v2/url/scan', data=params)
 	json_response = response.json()
-	print('scan of '+url+' : ')
-	print(json_response)
+#	print('scan of '+url+' : ')
+#	print(json_response)
 
 def virusTotalReport(url):
 	headers = {
@@ -94,13 +95,17 @@ def virusTotalReport(url):
 	params=params, headers=headers)
 	json_response = response.json()
 	if(json_response['positives'] != 0):
+		count = 0
 		for x in json_response['scans']:
 			if(json_response['scans'][x]['detected']==True):
-				print('anomaly detected : ')
-				print(json_response['scans'][x]['result'])
-				print('\n')
+#				print('anomaly detected : ')
+#				print(json_response['scans'][x]['result'])
+#				print('\n')
+				count += 1
+		return count
 	else:
-		print('nothing suspect found')
+#		print('nothing suspect found')
+		return 0
 
 
 def reservationDomaine(url):
