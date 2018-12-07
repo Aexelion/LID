@@ -9,7 +9,7 @@ import requests
 import time
 import datetime
 """
-Recherche de site de fishing parmis les sites '.org'
+Recherche de site de fishing parmis les sites '.org' et '.gouv.fr'
 """
 
 def creationCSV(filename,type):
@@ -60,23 +60,30 @@ def geoScore(url, wList=[], bList=[]):
 
 
 def variationURL(url, url2):
-	if(len(url)!=len(url2)):
-		return 0
-	else:
-		count = sum(1 for a, b in zip(seq1, seq2) if a != b)
-		return count
+	count = sum(1 for a, b in zip(url, url2) if a != b)
+	return count
 
 
 def verifVariation(url):
 	with open("top-1m.csv", newline='') as siteRef:
 		read = csv.reader(siteRef, delimiter=',')
 		mini = 1000000
+		score = 0
 		for ligne in read:
 			nbVar = variationURL(url, ligne[1])
-			if nbVar < mini :
-				mini = nbVar
-		return mini
-
+			if(nbVar==3 and url.split('.',2)[1]==ligne[1].split('.',1)[0] and url.split('.',1)[1]!=ligne[1].split('.',1)[1]):
+				score = 100
+				return score
+			else:
+				if nbVar < mini :
+					mini = nbVar
+		if(mini==1):
+			score = 100
+		if(mini==2):
+			score = 50
+		if(mini==3):
+			score = 20
+		return score
 
 def virusTotalScan(url):
 	params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'url':url}
@@ -109,14 +116,44 @@ def virusTotalReport(url):
 
 
 def reservationDomaine(url):
+	score = 0
 	whoisdom = whois.whois(url)
-	date_exp_domain = whoisdom.expiration_date
-	date_cre_domain = whoisdom.creation_date
-	hebergeur = whoisdom.registrar
-	print(date_cre_domain,date_exp_domain)
-
-def distance(url):
-	pass
+	dt = whoisdom.creation_date
+	try:
+		if(dt[0] == None):
+			score=100
+			return score
+		delta = datetime.datetime.now()-dt[0]
+		if(delta.days<2):
+			score=90
+		elif(delta.days<4):
+			score=70
+		elif(delta.days<7):
+			score=50
+		elif(delta.days<14):
+			score=25
+		elif(delta.days<20):
+			score=10
+		else:
+			score=0
+	except:
+		if(dt == None):
+			score=100
+			return score
+		delta = datetime.datetime.now()-dt
+		if(delta.days<2):
+			score=90
+		elif(delta.days<4):
+			score=70
+		elif(delta.days<7):
+			score=50
+		elif(delta.days<14):
+			score=25
+		elif(delta.days<20):
+			score=10
+		else:
+			score=0
+	return score
 
 dMonth={'Jan':1,'Feb':2,'Mar':3,'Apr':4,'May':5,'Jun':6,'Jul':7,'Aug':8,'Sep':9,'Oct':10,'Nov':11,'Dec':12}
 
@@ -134,13 +171,9 @@ def verifCertif(url):
 		#print(validity_end)
 		##list of trusted certification authority
 		##list of rejected certification authority
-		date_end = datetime.strptime(validity_end[:-4], "%b %d %H:%M:%S %Y")
-		print(date_end)
-		print(datetime.datetime.now())
-		delta = datetime.datetime().now()-date_end
-		delta2 = date_end - datetime.datetime.now()
-		print(delta)
-		print(delta2)
+		dt = time.strptime(validity_end[:-4], "%b %d %H:%M:%S %Y")
+		date_end = datetime.datetime(dt[0],dt[1],dt[2])
+		delta = datetime.datetime.now()-date_end
 		score = 0
 		if(delta.days>30):
 			score=80
@@ -152,17 +185,10 @@ def verifCertif(url):
 			score=20
 		else:
 			score=0
-		print(score)
 		return score
-		# if(validity_end[-8:-4]<time.localtime()[0]):
-		# 	score = 80
-		# elif(validity_end[-8:-4]==time.localtime()[0])
-		# 	if(dMonth[validity_end[:3]]-time.localtime()[1]<-1):
-		# 		score-=20
-		# 	elif(dMonth[validity_end[:3]]-time.localtime()[1]>=-1):
-
 	except:
-		pass
+		score=100
+		return score
 
 def reject(url):
 	with open("BDD/reject.txt", newline='') as rejectedDomain:
@@ -176,32 +202,17 @@ if __name__ == '__main__':
 #	print(geolocaliser('123.45.67.89'))
 	# virusTotalScan('google.com')
 	# virusTotalScan('www.impots.gouv.fr')
-	verifCertif('google.com')
-	#reservationDomaine('google.com')
-	verifCertif('wikipedia.org')
-	#reservationDomaine('wikipedia.org')
-	verifCertif('www.impots.gouv.fr')
-	#reservationDomaine('www.impots.gouv.fr')
+	#verifCertif('google.com')
+	reservationDomaine('google.com')
+	#verifCertif('wikipedia.org')
+	reservationDomaine('wikipedia.org')
+	#verifCertif('www.impots.gouv.fr')
+	reservationDomaine('www.impots.gouv.fr')
 	# virusTotalReport('google.com')
 	# virusTotalReport('www.impots.gouv.fr')
-	#url = 'amazon.co.uk.security-check.ga'
-	#virusTotalScan('amazon.co.uk.security-check.ga')
-	#verifCertif('amazon.co.uk.security-check.ga')
-	#reservationDomaine('amazon.co.uk.security-check.ga')
-	#virusTotalReport('amazon.co.uk.security-check.ga')
-#	 virusTotalScan('google.com')
-#	 virusTotalScan('www.impots.gouv.fr')
-#	 verifCertif('google.com')
-#	 reservationDomaine('google.com')
-#	 verifCertif('wikipedia.org')
-#	 reservationDomaine('wikipedia.org')
-#	 verifCertif('www.impots.gouv.fr')
-#	 reservationDomaine('www.impots.gouv.fr')
-#	 virusTotalReport('google.com')
-#	 virusTotalReport('www.impots.gouv.fr')
-	url = 'amazon.co.uk.security-check.ga'
-	scoreMaker(url)
-	virusTotalScan('amazon.co.uk.security-check.ga')
-	verifCertif('amazon.co.uk.security-check.ga')
+	# url = 'amazon.co.uk.security-check.ga'
+	# scoreMaker(url)
+	# virusTotalScan('amazon.co.uk.security-check.ga')
+	# verifCertif('amazon.co.uk.security-check.ga')
 	reservationDomaine('amazon.co.uk.security-check.ga')
-	virusTotalReport('amazon.co.uk.security-check.ga')
+	# virusTotalReport('amazon.co.uk.security-check.ga')
