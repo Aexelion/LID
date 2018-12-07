@@ -1,12 +1,10 @@
 #!/usr/bin/python3
 
 import csv
-# import geoip2.webservice
 import whois
 import socket
 import ipaddress
-import ssl
-import whois
+import ssl	
 """
 Recherche de site de fishing parmis les sites '.org'
 """
@@ -20,16 +18,30 @@ def creationCSV(filename,type):
 					writer.writerow(ligne)
 
 
-# def geolocaliser(ipAddr):
-# 	ip = ipaddress.ip_address(ipAddr)
-# 	if ip.version == 4:
-# 		with open("BDD/GeoLite2-City-Blocks-IPv4.csv", newline='') as csvListIPv4:
-# 			reader = csv.DictReader(csvListIPv4, delimiter=',')
-# 			for ligne in reader :
-# 				reseau = ipaddress.IPv4Network(ligne['network'])
-# 				if ip in list(reseau.hosts()) :
-# 					print(ligne['network'])
-# 					return 0
+def geolocaliser(ipAddr):
+ 	ipInterface = ipaddress.ip_interface(ipAddr)
+ 	codePays = -1
+ 	if ipInterface.version == 4 and ipInterface.ip.is_global:
+ 		with open("BDD/GeoLite2-City-Blocks-IPv4.csv", newline='') as csvListIPv4:
+ 			reader = csv.DictReader(csvListIPv4, delimiter=',')
+ 			for ligne in reader :
+ 				reseau = ipaddress.IPv4Network(ligne['network'])
+ 				if reseau.overlaps(ipInterface.network) :
+ 					codePays = ligne['geoname_id']
+ 					break
+ 	elif ipInterface.version == 6 and ipInterface.ip.is_global:
+ 		with open("BDD/GeoLite2-City-Blocks-IPv6.csv", newline='') as csvListIPv6:
+ 			reader = csv.DictReader(csvListIPv6, delimiter=',')
+ 			for ligne in reader :
+ 				reseau = ipaddress.IPv6Network(ligne['network'])
+ 				if reseau.overlaps(ipInterface.network) :
+ 					codePays = ligne['geoname_id']
+ 	if codePays != -1:
+ 		with open("BDD/GeoLite2-City-Locations-fr.csv", newline='') as codeCSV:
+ 			reader = csv.DictReader(codeCSV, delimiter=',')
+ 			for ligne in reader :
+ 				if codePays == ligne['geoname_id']:
+ 					return (ligne['continent_name'],ligne['country_name'])
 
 
 def variationURL(url):
@@ -85,7 +97,7 @@ def verifCertif(url):
 
 
 if __name__ == '__main__':
-	#geolocaliser('192.168.1.1')
+#	print(geolocaliser('123.45.67.89'))
 	verifCertif('google.com')
 	reservationDomaine('google.com')
 	verifCertif('wikipedia.org')
