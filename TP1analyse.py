@@ -13,7 +13,7 @@ def print_callback(message, context):
 
 	if message['message_type'] == "heartbeat":
 		return
-
+	
 #	test = input("Voulez-vous activer la géolocalisation des différents sites, cela augmente légèrement le processus (jusqu'à 1 minute) ? o/N ").upper()
 #	geoLoc = False
 #	while not(test == 'O' or test == 'N' or test == ''):
@@ -21,7 +21,7 @@ def print_callback(message, context):
 #		test = input("Voulez-vous activer la géolocalisation des différents sites, cela augmente légèrement le processus (jusqu'à 1 minute) ? o/N ").upper()
 #	if test == 'O':
 #		geoLoc = True
-
+	
 	if message['message_type'] == "certificate_update":
 		all_domains = message['data']['leaf_cert']['all_domains']
 
@@ -32,7 +32,7 @@ def print_callback(message, context):
 		if '.org' in domain or '.gouv.fr' in domain:
 			tmp = (u"[{}] {} (SAN: {})\n".format(datetime.datetime.now().strftime('%m/%d/%y %H:%M:%S'), domain, ", ".join(message['data']['leaf_cert']['all_domains'][1:])))
 			score = lescriptdetest(domain, False)
-
+			
 
 
 
@@ -43,16 +43,16 @@ def lescriptdetest(domain, geoLoc=False):
 	score += analyse.verifCertif(domain)
 	score += analyse.verifVariation(domain)
 	if geoLoc and '.gouv.fr' in domain:
-		score += geoScore(domain, wList=[France])
-
-
-
-
-
-
-
-
-
+		score += analyse.geoScore(domain, wList=[France])
+	return score
+		
+	
+	
+	
 if __name__ == '__main__' :
 	logging.basicConfig(format='[%(levelname)s:%(name)s] %(asctime)s - %(message)s', level=logging.INFO)
 	certstream.listen_for_events(print_callback,"wss://certstream.calidog.io")
+	
+
+
+	
