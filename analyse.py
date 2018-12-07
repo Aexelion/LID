@@ -110,11 +110,6 @@ def reservationDomaine(url):
 	hebergeur = whoisdom.registrar
 	print(date_cre_domain,date_exp_domain)
 
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 92c22ca54b9467c8abc4201ce2577c42790aad6d
 def distance(url):
 	pass
 
@@ -174,7 +169,6 @@ def reject(url):
 
 if __name__ == '__main__':
 #	print(geolocaliser('123.45.67.89'))
-<<<<<<< HEAD
 	# virusTotalScan('google.com')
 	# virusTotalScan('www.impots.gouv.fr')
 	verifCertif('google.com')
@@ -190,7 +184,6 @@ if __name__ == '__main__':
 	#verifCertif('amazon.co.uk.security-check.ga')
 	#reservationDomaine('amazon.co.uk.security-check.ga')
 	#virusTotalReport('amazon.co.uk.security-check.ga')
-=======
 #	 virusTotalScan('google.com')
 #	 virusTotalScan('www.impots.gouv.fr')
 #	 verifCertif('google.com')
@@ -207,4 +200,3 @@ if __name__ == '__main__':
 	verifCertif('amazon.co.uk.security-check.ga')
 	reservationDomaine('amazon.co.uk.security-check.ga')
 	virusTotalReport('amazon.co.uk.security-check.ga')
->>>>>>> 92c22ca54b9467c8abc4201ce2577c42790aad6d
