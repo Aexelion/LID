@@ -129,13 +129,10 @@ def verifCertif(url):
 		#print(validity_end)
 		##list of trusted certification authority
 		##list of rejected certification authority
-		date_end = datetime.strptime(validity_end[:-4], "%b %d %H:%M:%S %Y")
-		print(date_end)
-		print(datetime.datetime.now())
-		delta = datetime.datetime().now()-date_end
+		dt = time.strptime(validity_end[:-4], "%b %d %H:%M:%S %Y")
+		date_end = datetime.datetime(dt[0],dt[1],dt[2])
+		delta = datetime.datetime.now()-date_end
 		delta2 = date_end - datetime.datetime.now()
-		print(delta)
-		print(delta2)
 		score = 0
 		if(delta.days>30):
 			score=80
@@ -149,15 +146,9 @@ def verifCertif(url):
 			score=0
 		print(score)
 		return score
-		# if(validity_end[-8:-4]<time.localtime()[0]):
-		# 	score = 80
-		# elif(validity_end[-8:-4]==time.localtime()[0])
-		# 	if(dMonth[validity_end[:3]]-time.localtime()[1]<-1):
-		# 		score-=20
-		# 	elif(dMonth[validity_end[:3]]-time.localtime()[1]>=-1):
-
 	except:
-		pass
+		score=100
+		return score
 
 def reject(url):
 	with open("BDD/reject.txt", newline='') as rejectedDomain:
@@ -194,9 +185,9 @@ if __name__ == '__main__':
 #	 reservationDomaine('www.impots.gouv.fr')
 #	 virusTotalReport('google.com')
 #	 virusTotalReport('www.impots.gouv.fr')
-	url = 'amazon.co.uk.security-check.ga'
-	scoreMaker(url)
-	virusTotalScan('amazon.co.uk.security-check.ga')
-	verifCertif('amazon.co.uk.security-check.ga')
-	reservationDomaine('amazon.co.uk.security-check.ga')
-	virusTotalReport('amazon.co.uk.security-check.ga')
+	# url = 'amazon.co.uk.security-check.ga'
+	# scoreMaker(url)
+	# virusTotalScan('amazon.co.uk.security-check.ga')
+	# verifCertif('amazon.co.uk.security-check.ga')
+	# reservationDomaine('amazon.co.uk.security-check.ga')
+	# virusTotalReport('amazon.co.uk.security-check.ga')
