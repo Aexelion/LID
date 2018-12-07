@@ -57,6 +57,17 @@ def geolocaliser(ipAddr):
  					return (ligne['continent_name'],ligne['country_name'])
 
 
+def geoScore(url, wList=[], bList=[]):
+	ip = socket.gethostbyname(url)
+	loc = geolocaliser(ip)
+	if (loc[0] in bList) or (loc[1] in bList):
+		return 100
+	elif loc[0] in wList or loc[1] in wList:
+		return 0
+	else :
+		return 50
+
+
 def variationURL(url):
 	#get url2 from database
 	url2 = 'something.com'
@@ -100,7 +111,10 @@ def reservationDomaine(url):
 	print(date_cre_domain,date_exp_domain)
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 92c22ca54b9467c8abc4201ce2577c42790aad6d
 def distance(url):
 	pass
 
@@ -154,12 +168,13 @@ def reject(url):
 	with open("BDD/reject.txt", newline='') as rejectedDomain:
 		for ligne in rejectedDomain:
 			if url in ligne:
-				return 0 # TODO Mettre un score qu'il faut return
+				return 100
 
 
 
 if __name__ == '__main__':
 #	print(geolocaliser('123.45.67.89'))
+<<<<<<< HEAD
 	# virusTotalScan('google.com')
 	# virusTotalScan('www.impots.gouv.fr')
 	verifCertif('google.com')
@@ -175,3 +190,21 @@ if __name__ == '__main__':
 	#verifCertif('amazon.co.uk.security-check.ga')
 	#reservationDomaine('amazon.co.uk.security-check.ga')
 	#virusTotalReport('amazon.co.uk.security-check.ga')
+=======
+#	 virusTotalScan('google.com')
+#	 virusTotalScan('www.impots.gouv.fr')
+#	 verifCertif('google.com')
+#	 reservationDomaine('google.com')
+#	 verifCertif('wikipedia.org')
+#	 reservationDomaine('wikipedia.org')
+#	 verifCertif('www.impots.gouv.fr')
+#	 reservationDomaine('www.impots.gouv.fr')
+#	 virusTotalReport('google.com')
+#	 virusTotalReport('www.impots.gouv.fr')
+	url = 'amazon.co.uk.security-check.ga'
+	scoreMaker(url)
+	virusTotalScan('amazon.co.uk.security-check.ga')
+	verifCertif('amazon.co.uk.security-check.ga')
+	reservationDomaine('amazon.co.uk.security-check.ga')
+	virusTotalReport('amazon.co.uk.security-check.ga')
+>>>>>>> 92c22ca54b9467c8abc4201ce2577c42790aad6d
