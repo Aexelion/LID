@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import logging
 import sys
 import datetime
@@ -39,10 +40,11 @@ def print_callback(message, context):
 def lescriptdetest(domain, geoLoc=False):
 	score = 0
 	score += analyse.reject(domain)
-	score += verifCertif(domain)
-	score += verifVariation(domain)
+	score += analyse.verifCertif(domain)
+	score += analyse.verifVariation(domain)
 	if geoLoc and '.gouv.fr' in domain:
-		score += geoScore(domain, wList=[France])
+		score += analyse.geoScore(domain, wList=[France])
+	return score
 		
 	
 	

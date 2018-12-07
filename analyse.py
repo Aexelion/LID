@@ -191,10 +191,12 @@ def verifCertif(url):
 		return score
 
 def reject(url):
+	res = 0
 	with open("BDD/reject.txt", newline='') as rejectedDomain:
 		for ligne in rejectedDomain:
 			if url in ligne:
-				return 100
+				res =  100
+	return res
 
 
 
