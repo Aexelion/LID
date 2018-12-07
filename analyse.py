@@ -59,14 +59,31 @@ def geoScore(url, wList=[], bList=[]):
 		return 50
 
 
-def variationURL(url):
-	#get url2 from database
-	url2 = 'something.com'
-	if(len(url)!=len(url2)):
-		pass #score + 0?
-	else:
+def variationURL(url, url2):
 		count = sum(1 for a, b in zip(seq1, seq2) if a != b)
+		return count
 
+
+def verifVariation(url):
+	with open("top-1m.csv", newline='') as siteRef:
+		read = csv.reader(siteRef, delimiter=',')
+		mini = 1000000
+		score = 0
+		for ligne in read:
+			nbVar = variationURL(url, ligne[1])
+			if(nbVar==3 and url.split('.',2)[1]==ligne[1].split('.',1)[0] and url.split('.',1)[1]!=ligne[1].split('.',1)[1]):
+				score = 100
+				return score
+			else:
+				if nbVar < mini :
+					mini = nbVar
+		if(mini==1):
+			score = 100
+		if(mini==2):
+			score = 50
+		if(mini==3):
+			score = 20
+		return score
 
 def virusTotalScan(url):
 	params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'url':url}
@@ -95,23 +112,43 @@ def virusTotalReport(url):
 
 
 def reservationDomaine(url):
+	score = 0
 	whoisdom = whois.whois(url)
 	dt = whoisdom.creation_date
-	date_cre_domain = datetime.datetime(dt[0],dt[1],dt[2])
-	delta = datetime.datetime.now()-date_cre_domain
-	score = 0
-	if(delta.days<2):
-		score=90
-	elif(delta.days<4):
-		score=70
-	elif(delta.days<7):
-		score=50
-	elif(delta.days<14):
-		score=25
-	elif(delta.days<20):
-		score=10
-	else:
-		score=0
+	try:
+		if(dt[0] == None):
+			score=100
+			return score
+		delta = datetime.datetime.now()-dt[0]
+		if(delta.days<2):
+			score=90
+		elif(delta.days<4):
+			score=70
+		elif(delta.days<7):
+			score=50
+		elif(delta.days<14):
+			score=25
+		elif(delta.days<20):
+			score=10
+		else:
+			score=0
+	except:
+		if(dt == None):
+			score=100
+			return score
+		delta = datetime.datetime.now()-dt
+		if(delta.days<2):
+			score=90
+		elif(delta.days<4):
+			score=70
+		elif(delta.days<7):
+			score=50
+		elif(delta.days<14):
+			score=25
+		elif(delta.days<20):
+			score=10
+		else:
+			score=0
 	return score
 
 dMonth={'Jan':1,'Feb':2,'Mar':3,'Apr':4,'May':5,'Jun':6,'Jul':7,'Aug':8,'Sep':9,'Oct':10,'Nov':11,'Dec':12}
@@ -169,24 +206,9 @@ if __name__ == '__main__':
 	reservationDomaine('www.impots.gouv.fr')
 	# virusTotalReport('google.com')
 	# virusTotalReport('www.impots.gouv.fr')
-	#url = 'amazon.co.uk.security-check.ga'
-	#virusTotalScan('amazon.co.uk.security-check.ga')
-	#verifCertif('amazon.co.uk.security-check.ga')
-	#reservationDomaine('amazon.co.uk.security-check.ga')
-	#virusTotalReport('amazon.co.uk.security-check.ga')
-#	 virusTotalScan('google.com')
-#	 virusTotalScan('www.impots.gouv.fr')
-#	 verifCertif('google.com')
-#	 reservationDomaine('google.com')
-#	 verifCertif('wikipedia.org')
-#	 reservationDomaine('wikipedia.org')
-#	 verifCertif('www.impots.gouv.fr')
-#	 reservationDomaine('www.impots.gouv.fr')
-#	 virusTotalReport('google.com')
-#	 virusTotalReport('www.impots.gouv.fr')
 	# url = 'amazon.co.uk.security-check.ga'
 	# scoreMaker(url)
 	# virusTotalScan('amazon.co.uk.security-check.ga')
 	# verifCertif('amazon.co.uk.security-check.ga')
-	# reservationDomaine('amazon.co.uk.security-check.ga')
+	reservationDomaine('amazon.co.uk.security-check.ga')
 	# virusTotalReport('amazon.co.uk.security-check.ga')
