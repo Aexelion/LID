@@ -56,9 +56,9 @@ def geolocaliser(ipAddr):
 
 
 def geoScore(url, wList=[], bList=[]):
-#	ip = getIpFromUrl(url)
-#	loc = geolocaliser(ip)
-	if loc[0] in bList or loc[1] in bList:
+	ip = socket.gethostbyname(url)
+	loc = geolocaliser(ip)
+	if (loc[0] in bList) or (loc[1] in bList):
 		return 100
 	elif loc[0] in wList or loc[1] in wList:
 		return 0
