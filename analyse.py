@@ -9,17 +9,8 @@ import requests
 import time
 import datetime
 """
-Recherche de site de fishing parmis les sites '.org'
+Recherche de site de fishing parmis les sites '.org' et '.gouv.fr'
 """
-
-def scoreMaker(url):
-	scoreOfUrl = (url,0)
-	return scoreOfUrl
-
-def scoreModifier(scoreOfUrl, danger_p):
-	scoreOfUrl = (scoreOfUrl[0],scoreOfUrl[1]+danger_p)
-	return scoreOfUrl
-
 
 def creationCSV(filename,type):
 	with open('top-1m.csv', newline='') as csvIn:
@@ -105,13 +96,23 @@ def virusTotalReport(url):
 
 def reservationDomaine(url):
 	whoisdom = whois.whois(url)
-	date_exp_domain = whoisdom.expiration_date
-	date_cre_domain = whoisdom.creation_date
-	hebergeur = whoisdom.registrar
-	print(date_cre_domain,date_exp_domain)
-
-def distance(url):
-	pass
+	dt = whoisdom.creation_date
+	date_cre_domain = datetime.datetime(dt[0],dt[1],dt[2])
+	delta = datetime.datetime.now()-date_cre_domain
+	score = 0
+	if(delta.days<2):
+		score=90
+	elif(delta.days<4):
+		score=70
+	elif(delta.days<7):
+		score=50
+	elif(delta.days<14):
+		score=25
+	elif(delta.days<20):
+		score=10
+	else:
+		score=0
+	return score
 
 dMonth={'Jan':1,'Feb':2,'Mar':3,'Apr':4,'May':5,'Jun':6,'Jul':7,'Aug':8,'Sep':9,'Oct':10,'Nov':11,'Dec':12}
 
@@ -132,7 +133,6 @@ def verifCertif(url):
 		dt = time.strptime(validity_end[:-4], "%b %d %H:%M:%S %Y")
 		date_end = datetime.datetime(dt[0],dt[1],dt[2])
 		delta = datetime.datetime.now()-date_end
-		delta2 = date_end - datetime.datetime.now()
 		score = 0
 		if(delta.days>30):
 			score=80
@@ -144,7 +144,6 @@ def verifCertif(url):
 			score=20
 		else:
 			score=0
-		print(score)
 		return score
 	except:
 		score=100
@@ -162,12 +161,12 @@ if __name__ == '__main__':
 #	print(geolocaliser('123.45.67.89'))
 	# virusTotalScan('google.com')
 	# virusTotalScan('www.impots.gouv.fr')
-	verifCertif('google.com')
-	#reservationDomaine('google.com')
-	verifCertif('wikipedia.org')
-	#reservationDomaine('wikipedia.org')
-	verifCertif('www.impots.gouv.fr')
-	#reservationDomaine('www.impots.gouv.fr')
+	#verifCertif('google.com')
+	reservationDomaine('google.com')
+	#verifCertif('wikipedia.org')
+	reservationDomaine('wikipedia.org')
+	#verifCertif('www.impots.gouv.fr')
+	reservationDomaine('www.impots.gouv.fr')
 	# virusTotalReport('google.com')
 	# virusTotalReport('www.impots.gouv.fr')
 	#url = 'amazon.co.uk.security-check.ga'
