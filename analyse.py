@@ -4,10 +4,21 @@ import csv
 import whois
 import socket
 import ipaddress
-import ssl	
+import ssl
+import requests
 """
 Recherche de site de fishing parmis les sites '.org'
 """
+
+def scoreMaker(url):
+	scoreOfUrl = (url,0)
+	return scoreOfUrl
+
+def scoreModifier(scoreOfUrl, danger_p):
+	scoreOfUrl = (scoreOfUrl[0],scoreOfUrl[1]+danger_p)
+	return scoreOfUrl
+
+
 def creationCSV(filename,type):
 	with open('top-1m.csv', newline='') as csvIn:
 		with open(filename+'.csv', 'w', newline='') as csvOut:
@@ -45,16 +56,32 @@ def geolocaliser(ipAddr):
 
 
 def variationURL(url):
-	pass
-
-
-def httpOnly(url):
 	#get url2 from database
 	url2 = 'something.com'
 	if(len(url)!=len(url2)):
 		pass #score + 0?
 	else:
 		count = sum(1 for a, b in zip(seq1, seq2) if a != b)
+
+
+def virusTotalScan(url):
+	params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'url':url}
+	response = requests.post('https://www.virustotal.com/vtapi/v2/url/scan', data=params)
+	json_response = response.json()
+	print('scan of '+url+' : ')
+	print(json_response)
+
+def virusTotalReport(url):
+	headers = {
+  		"Accept-Encoding": "gzip, deflate",
+  		"User-Agent" : "gzip,  My Python requests library example client or username"
+  		}
+	params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'resource':url}
+	response = requests.post('https://www.virustotal.com/vtapi/v2/url/report',
+	params=params, headers=headers)
+	json_response = response.json()
+	print('report of '+url+' : ')
+	print(json_response)
 
 
 def reservationDomaine(url):
@@ -76,31 +103,45 @@ def distance(url):
 
 
 def verifCertif(url):
-	hostname = url
-	context = ssl.create_default_context()
-	sock = context.wrap_socket(socket.socket(), server_hostname=hostname)
-	sock.connect((hostname, 443)) #try?
-	certificate = sock.getpeercert()
-	subject = dict(x[0] for x in certificate['subject'])
-	issued_to = subject['commonName']
-	issuer = dict(x[0] for x in certificate['issuer'])
-	issued_by = issuer['commonName']
-	validity_start = certificate['notBefore']
-	validity_end = certificate['notAfter']
-	version = certificate['version']
-	print(issued_to)
-	print(issued_by)
-	print(validity_start)
-	print(validity_end)
+	try:
+		hostname = url
+		context = ssl.create_default_context()
+		sock = context.wrap_socket(socket.socket(), server_hostname=hostname)
+		sock.connect((hostname, 443)) #try?
+		certificate = sock.getpeercert()
+		subject = dict(x[0] for x in certificate['subject'])
+		issued_to = subject['commonName']
+		issuer = dict(x[0] for x in certificate['issuer'])
+		issued_by = issuer['commonName']
+		validity_start = certificate['notBefore']
+		validity_end = certificate['notAfter']
+		version = certificate['version']
+		print(issued_to)
+		print(issued_by)
+		print(validity_start)
+		print(validity_end)
+	except:
+		pass
+
 
 
 
 
 if __name__ == '__main__':
 #	print(geolocaliser('123.45.67.89'))
-	verifCertif('google.com')
-	reservationDomaine('google.com')
-	verifCertif('wikipedia.org')
-	reservationDomaine('wikipedia.org')
-	verifCertif('www.impots.gouv.fr')
-	reservationDomaine('www.impots.gouv.fr')
+	# virusTotalScan('google.com')
+	# virusTotalScan('www.impots.gouv.fr')
+	# verifCertif('google.com')
+	# reservationDomaine('google.com')
+	# verifCertif('wikipedia.org')
+	# reservationDomaine('wikipedia.org')
+	# verifCertif('www.impots.gouv.fr')
+	# reservationDomaine('www.impots.gouv.fr')
+	# virusTotalReport('google.com')
+	# virusTotalReport('www.impots.gouv.fr')
+	url = 'amazon.co.uk.security-check.ga'
+	scoreMaker(url)
+	virusTotalScan('amazon.co.uk.security-check.ga')
+	verifCertif('amazon.co.uk.security-check.ga')
+	reservationDomaine('amazon.co.uk.security-check.ga')
+	virusTotalReport('amazon.co.uk.security-check.ga')
