@@ -31,17 +31,20 @@ def print_callback(message, context):
 			domain = all_domains[0]
 		if '.org' in domain or '.gouv.fr' in domain:
 			tmp = (u"[{}] {} (SAN: {})\n".format(datetime.datetime.now().strftime('%m/%d/%y %H:%M:%S'), domain, ", ".join(message['data']['leaf_cert']['all_domains'][1:])))
-			score = lescriptdetest(domain, False)
+			score = lescriptdetest(domain, False) # TODO analyse du score sur 1000
 			
 
 
 
 
 def lescriptdetest(domain, geoLoc=False):
+	virusTotalScan(domain)
 	score = 0
-	score += analyse.reject(domain)
-	score += analyse.verifCertif(domain)
+	score += analyse.reject(domain)*2
+	score += analyse.verifCertif(domain)*2
 	score += analyse.verifVariation(domain)
+	score += reservationDomaine(domain)
+	score += virusTotalReport(domain)*4
 	if geoLoc and '.gouv.fr' in domain:
 		score += analyse.geoScore(domain, wList=[France])
 	return score
