@@ -123,7 +123,11 @@ def verifCertif(url):
 	except:
 		pass
 
-
+def reject(url):
+	with open("BDD/reject.txt", newline='') as rejectedDomain:
+		for ligne in rejectedDomain:
+			if url in ligne:
+				return 0 # TODO Mettre un score qu'il faut return
 
 
 
