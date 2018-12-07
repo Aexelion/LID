@@ -60,7 +60,7 @@ def geoScore(url, wList=[], bList=[]):
 
 
 def variationURL(url, url2):
-		count = sum(1 for a, b in zip(seq1, seq2) if a != b)
+		count = sum(1 for a, b in zip(url, url2) if a != b)
 		return count
 
 
@@ -196,19 +196,20 @@ def reject(url):
 
 if __name__ == '__main__':
 #	print(geolocaliser('123.45.67.89'))
-	# virusTotalScan('google.com')
-	# virusTotalScan('www.impots.gouv.fr')
+	#virusTotalScan('google.com')
+	#virusTotalScan('www.impots.gouv.fr')
 	#verifCertif('google.com')
-	reservationDomaine('google.com')
+	#reservationDomaine('google.com')
 	#verifCertif('wikipedia.org')
 	reservationDomaine('wikipedia.org')
+	verifVariation('wikipedia.org')
 	#verifCertif('www.impots.gouv.fr')
-	reservationDomaine('www.impots.gouv.fr')
-	# virusTotalReport('google.com')
-	# virusTotalReport('www.impots.gouv.fr')
-	# url = 'amazon.co.uk.security-check.ga'
-	# scoreMaker(url)
-	# virusTotalScan('amazon.co.uk.security-check.ga')
-	# verifCertif('amazon.co.uk.security-check.ga')
-	reservationDomaine('amazon.co.uk.security-check.ga')
-	# virusTotalReport('amazon.co.uk.security-check.ga')
+	#reservationDomaine('www.impots.gouv.fr')
+	#virusTotalReport('google.com')
+	#virusTotalReport('www.impots.gouv.fr')
+	#url = 'amazon.co.uk.security-check.ga'
+	#scoreMaker(url)
+	#virusTotalScan('amazon.co.uk.security-check.ga')
+	#verifCertif('amazon.co.uk.security-check.ga')
+	#reservationDomaine('amazon.co.uk.security-check.ga')
+	#virusTotalReport('amazon.co.uk.security-check.ga')
