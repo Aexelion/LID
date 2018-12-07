@@ -89,8 +89,8 @@ def virusTotalScan(url):
 	params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'url':url}
 	response = requests.post('https://www.virustotal.com/vtapi/v2/url/scan', data=params)
 	json_response = response.json()
-	print('scan of '+url+' : ')
-	print(json_response)
+#	print('scan of '+url+' : ')
+#	print(json_response)
 
 def virusTotalReport(url):
 	headers = {
@@ -102,13 +102,17 @@ def virusTotalReport(url):
 	params=params, headers=headers)
 	json_response = response.json()
 	if(json_response['positives'] != 0):
+		count = 0
 		for x in json_response['scans']:
 			if(json_response['scans'][x]['detected']==True):
-				print('anomaly detected : ')
-				print(json_response['scans'][x]['result'])
-				print('\n')
+#				print('anomaly detected : ')
+#				print(json_response['scans'][x]['result'])
+#				print('\n')
+				count += 1
+		return count
 	else:
-		print('nothing suspect found')
+#		print('nothing suspect found')
+		return 0
 
 
 def reservationDomaine(url):
