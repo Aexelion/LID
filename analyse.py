@@ -101,17 +101,14 @@ def virusTotalReport(url):
 	response = requests.post('https://www.virustotal.com/vtapi/v2/url/report',
 	params=params, headers=headers)
 	json_response = response.json()
-	if(json_response['positives'] != 0):
-		count = 0
-		for x in json_response['scans']:
-			if(json_response['scans'][x]['detected']==True):
-#				print('anomaly detected : ')
-#				print(json_response['scans'][x]['result'])
-#				print('\n')
-				count += 1
-		return count
-	else:
-#		print('nothing suspect found')
+	count = json_response['positives']
+	if count == 1 :
+		return 50
+	elif count == 2 :
+		return 75
+	elif count > 2:
+		return 100
+	else :
 		return 0
 
 

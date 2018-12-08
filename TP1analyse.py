@@ -5,6 +5,8 @@ import datetime
 import certstream
 import queue
 import analyse
+import time
+import stix2
 
 #exQ = queue()
 
@@ -13,7 +15,7 @@ def print_callback(message, context):
 
 	if message['message_type'] == "heartbeat":
 		return
-
+	
 #	test = input("Voulez-vous activer la géolocalisation des différents sites, cela augmente légèrement le processus (jusqu'à 1 minute) ? o/N ").upper()
 #	geoLoc = False
 #	while not(test == 'O' or test == 'N' or test == ''):
@@ -21,7 +23,7 @@ def print_callback(message, context):
 #		test = input("Voulez-vous activer la géolocalisation des différents sites, cela augmente légèrement le processus (jusqu'à 1 minute) ? o/N ").upper()
 #	if test == 'O':
 #		geoLoc = True
-
+	
 	if message['message_type'] == "certificate_update":
 		all_domains = message['data']['leaf_cert']['all_domains']
 
@@ -29,30 +31,66 @@ def print_callback(message, context):
 			domain = "NULL"
 		else:
 			domain = all_domains[0]
+		
 		if '.org' in domain or '.gouv.fr' in domain:
-			tmp = (u"[{}] {} (SAN: {})\n".format(datetime.datetime.now().strftime('%m/%d/%y %H:%M:%S'), domain, ", ".join(message['data']['leaf_cert']['all_domains'][1:])))
+#			print(domain)
+			tmp = (u"[{}] {} (SAN: {})".format(datetime.datetime.now().strftime('%m/%d/%y %H:%M:%S'), domain, ", ".join(message['data']['leaf_cert']['all_domains'][1:])))
 			score = lescriptdetest(domain, False)
-
+			
+			ts = time.time()
+			st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+#			print(tmp + " - Score : " + str(score))
+			
+			if score < 50:
+				indicator = stix2.Indicator(
+					labels=["benine site","score="+str(score)],
+					pattern="[url:value = '" + domain + "']"
+				)
+#				print(indicator)
+			elif score < 300:
+				indicator = stix2.Indicator(
+					labels=["potential phishing","score="+str(score)],
+					pattern="[url:value = '" + domain + "']"
+				)
+#				print(indicator)
+			elif score < 700:
+				indicator = stix2.Indicator(
+					labels=["probable phishing","score="+str(score)],
+					pattern="[url:value = '" + domain + "']"
+				)
+#				print(indicator)
+			else :
+				indicator = stix2.Indicator(
+					labels=["highly probable phishing","score="+str(score)],
+					pattern="[url:value = '" + domain + "']"
+				)
+#				print(indicator)
+			
+			
+			
 
 
 
 
 def lescriptdetest(domain, geoLoc=False):
+	analyse.virusTotalScan(domain)
 	score = 0
-	score += analyse.reject(domain)
-	score += analyse.verifCertif(domain)
+	score += analyse.reject(domain)*2
+	score += analyse.verifCertif(domain)*2
 	score += analyse.verifVariation(domain)
+	score += analyse.reservationDomaine(domain)
+	score += analyse.virusTotalReport(domain)*4
 	if geoLoc and '.gouv.fr' in domain:
-		score += geoScore(domain, wList=[France])
-
-
-
-
-
-
-
-
-
+		score += analyse.geoScore(domain, wList=[France])
+	return score
+		
+	
+	
+	
 if __name__ == '__main__' :
 	logging.basicConfig(format='[%(levelname)s:%(name)s] %(asctime)s - %(message)s', level=logging.INFO)
 	certstream.listen_for_events(print_callback,"wss://certstream.calidog.io")
+	
+
+
+	
