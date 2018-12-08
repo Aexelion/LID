@@ -5,6 +5,8 @@ import datetime
 import certstream
 import queue
 import analyse
+import time
+import stix2
 
 #exQ = queue()
 
@@ -29,22 +31,55 @@ def print_callback(message, context):
 			domain = "NULL"
 		else:
 			domain = all_domains[0]
+		
 		if '.org' in domain or '.gouv.fr' in domain:
-			tmp = (u"[{}] {} (SAN: {})\n".format(datetime.datetime.now().strftime('%m/%d/%y %H:%M:%S'), domain, ", ".join(message['data']['leaf_cert']['all_domains'][1:])))
-			score = lescriptdetest(domain, False) # TODO analyse du score sur 1000
+#			print(domain)
+			tmp = (u"[{}] {} (SAN: {})".format(datetime.datetime.now().strftime('%m/%d/%y %H:%M:%S'), domain, ", ".join(message['data']['leaf_cert']['all_domains'][1:])))
+			score = lescriptdetest(domain, False)
+			
+			ts = time.time()
+			st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+#			print(tmp + " - Score : " + str(score))
+			
+			if score < 50:
+				indicator = stix2.Indicator(
+					labels=["benine site","score="+str(score)],
+					pattern="[url:value = '" + domain + "']"
+				)
+#				print(indicator)
+			elif score < 300:
+				indicator = stix2.Indicator(
+					labels=["potential phishing","score="+str(score)],
+					pattern="[url:value = '" + domain + "']"
+				)
+#				print(indicator)
+			elif score < 700:
+				indicator = stix2.Indicator(
+					labels=["probable phishing","score="+str(score)],
+					pattern="[url:value = '" + domain + "']"
+				)
+#				print(indicator)
+			else :
+				indicator = stix2.Indicator(
+					labels=["highly probable phishing","score="+str(score)],
+					pattern="[url:value = '" + domain + "']"
+				)
+#				print(indicator)
+			
+			
 			
 
 
 
 
 def lescriptdetest(domain, geoLoc=False):
-	virusTotalScan(domain)
+	analyse.virusTotalScan(domain)
 	score = 0
 	score += analyse.reject(domain)*2
 	score += analyse.verifCertif(domain)*2
 	score += analyse.verifVariation(domain)
-	score += reservationDomaine(domain)
-	score += virusTotalReport(domain)*4
+	score += analyse.reservationDomaine(domain)
+	score += analyse.virusTotalReport(domain)*4
 	if geoLoc and '.gouv.fr' in domain:
 		score += analyse.geoScore(domain, wList=[France])
 	return score
