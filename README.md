@@ -1,6 +1,8 @@
 <Auteur : DUMANGET Dorian>
 <Auteur : PEREIRA-REGNAULT Elio>
 
+<Language : Python3>
+
 # TP1 - Cyber Threat Intelligence
 
 ## Outil de détection de site d'hameçonnage (Spear-phishing)
@@ -19,24 +21,22 @@ Afin de détecter les sites malveillants, notre analyse sera effectuée en 2 par
 
 -  Première partie
 
-     - On vérifie la réputation de l'adresse IP, du système autonome ainsi que l'autorité de certification du site.
-     -  On recherche des informations sur l'hébergeur (Géolocalisation, traffic estimé).
-     -  On vérifie la distance syntaxique par rapport à une liste d'url valide
-     -  On vérifie ensuite si le site est en HTTPS et bien configuré
+    - On vérifie la réputation de l'adresse IP, du système autonome ainsi que l'autorité de certification du site.
+    -  On recherche des informations sur l'hébergeur (Géolocalisation, traffic estimé).
+    -  On vérifie la distance syntaxique par rapport à une liste d'url valide
+    -  On vérifie ensuite si le site est en HTTPS et bien configuré
 
 -  Deuxième partie
 
-  - Analyse du JS dans la page
-  - Analyse des redirections
-  - Présence de formulaire à données sensibles
-  - RGPD (Sites EU)
+    - Analyse du JS dans la page
+    -  Analyse des redirections
+    -  Présence de formulaire à données sensibles
+    -  RGPD (Sites EU)
 
 En cas d'ambiguïté des résultats après analyse, on redonne la main à l'utilisateur pour vérifier le site en question.
-
-L'outil sera développer en python3.
 
 ## Sources et services utilisés
 
 - Certstream
-- GeoIP2 Downloadable Databases
+- This product includes GeoLite2 data created by MaxMind, available from [http://www.maxmind.com](http://www.maxmind.com)
 - Python-whois
