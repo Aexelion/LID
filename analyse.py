@@ -85,32 +85,41 @@ def verifVariation(url):
 			score = 20
 		return score
 
+virusTotalTry = False
+
 def virusTotalScan(url):
-	params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'url':url}
-	response = requests.post('https://www.virustotal.com/vtapi/v2/url/scan', data=params)
-	json_response = response.json()
+	try:
+		params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'url':url}
+		response = requests.post('https://www.virustotal.com/vtapi/v2/url/scan', data=params)
+		json_response = response.json()
+		virusTotalTry = True
+	except:
+		virusTotalTry = False
 #	print('scan of '+url+' : ')
 #	print(json_response)
 
 def virusTotalReport(url):
-	headers = {
-  		"Accept-Encoding": "gzip, deflate",
-  		"User-Agent" : "gzip,  My Python requests library example client or username"
-  		}
-	params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'resource':url}
-	response = requests.post('https://www.virustotal.com/vtapi/v2/url/report',
-	params=params, headers=headers)
-	json_response = response.json()
-	count = json_response['positives']
-	if count == 1 :
-		return 50
-	elif count == 2 :
-		return 75
-	elif count > 2:
-		return 100
-	else :
-		return 0
-
+		try:
+			headers = {
+  				"Accept-Encoding": "gzip, deflate",
+  				"User-Agent" : "gzip,  My Python requests library example client or username"
+  			}
+			params = {'apikey': 'c8d66d5d8ea2e078f31e20b501e21aa5b55d9da07c72d8b49456fb202de725fc', 'resource':url}
+			response = requests.post('https://www.virustotal.com/vtapi/v2/url/report',
+			params=params, headers=headers)
+			json_response = response.json()
+			count = json_response['positives']
+			if count == 1 :
+				return 50
+			elif count == 2 :
+				return 75
+			elif count > 2:
+				return 100
+			else :
+				return 0
+		except:
+			print("Couldn't provide report from TotalVirus.\n We advice you to rerun that url again later and ignore the result provided.\n If you don't want to ignore the url, remember to consider the score given over 600 and not 1000. \n It might be safe to say that the url provided is potentally dangerous if it's greater or equal to 200, but remember we cannot conclude anything without VirusTotal.\n")
+			return 0
 
 def reservationDomaine(url):
 	score = 0
