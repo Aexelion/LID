@@ -17,23 +17,12 @@ Ce sont ces différents sites web que l'on cherche à identifier via notre outil
 
 ### Mise en oeuvre
 
-Afin de détecter les sites malveillants, notre analyse sera effectuée en 2 parties :
+Afin de détecter les sites malveillants, notre analyse sera effectuée de la façon suivante :
 
--  Première partie
-
-    - On vérifie la réputation de l'adresse IP, du système autonome ainsi que l'autorité de certification du site.
-    -  On recherche des informations sur l'hébergeur (Géolocalisation, traffic estimé).
-    -  On vérifie la distance syntaxique par rapport à une liste d'url valide
-    -  On vérifie ensuite si le site est en HTTPS et bien configuré
-
--  Deuxième partie
-
-    - Analyse du JS dans la page
-    -  Analyse des redirections
-    -  Présence de formulaire à données sensibles
-    -  RGPD (Sites EU)
-
-En cas d'ambiguïté des résultats après analyse, on redonne la main à l'utilisateur pour vérifier le site en question.
+-  On vérifie la réputation de l'URL ainsi que l'autorité de certification du site.
+-  On vérifie la distance syntaxique par rapport à une liste d'url valide
+-  On vérifie ensuite si le site est en HTTPS et bien configuré
+-  On demande à l'utilisateur si il souhaite rechercher des informations sur l'hébergeur (Géolocalisation).
 
 ## Sources et services utilisés
 
